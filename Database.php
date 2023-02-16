@@ -1,37 +1,44 @@
 <?php
 
-require_once('DatabaseInterface.php');
+// use DatabaseConnectionInterface as GlobalDatabaseConnectionInterface;
 
-class Database implements DatabaseInterface {
-    private $pdo;
+interface DatabaseConnectionInterface
+{
+    public function connect();
+    public function test_input($data);
+    public function message($content, $status);
 
-    public function __construct(PDO $pdo) {
-      $this->pdo = $pdo;
-    }
-
-    public function create(array $data) {
-      $sql = 'INSERT INTO users (name, email, phone) VALUES (:name, :email, :phone)';
-      $stmt = $this->pdo->prepare($sql);
-      $stmt->execute($data);
-    }
-
-    public function read(int $id) {
-      $sql = "SELECT * FROM users WHERE id = :id";
-      $stmt = $this->pdo->prepare($sql);
-      $stmt->execute(['id' => $id]);
-      return $stmt->fetch();
-    }
-
-    public function update(int $id, array $data) {
-      $sql = 'UPDATE users SET name = :name, email = :email, phone = :phone WHERE id = :id';
-      $stmt = $this->pdo->prepare($sql);
-      $data['id'] = $id;
-      $stmt->execute($data);
-    }
-
-    public function delete(int $id) {
-      $sql = 'DELETE FROM users WHERE id = :id';
-      $stmt = $this->pdo->prepare($sql);
-      $stmt->execute(['id' => $id]);
-    }
 }
+
+class Database
+{
+    // DB Params
+    private const DBHOST = 'localhost';
+    private const DBUSER = 'root';
+    private const DBPASS = '';
+    private const DBNAME = 'crud-api-pdo';
+    //Conn variable
+    protected $conn = null;
+    // Data Source Network
+    private $dsn = 'mysql:host=' . self::DBHOST . ';dbname=' . self::DBNAME . '';
+
+
+
+    //DB connect
+    public function connect()
+    {
+        try {
+            $this->conn = new PDO($this->dsn, self::DBUSER, self::DBPASS);
+            $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            echo "connected";
+        } catch (PDOException $e) {
+            die('Connectionn Failed : ' . $e->getMessage());
+        }
+        return $this->conn;
+    }
+  
+}
+
+$user = new Database();
+$user-> connect();
+
