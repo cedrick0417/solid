@@ -1,24 +1,69 @@
 <?php
 require_once('Database.php');
-interface DAO {
-    public function create($data);
-    public function read($id);
-    public function update($id, $data);
+
+
+interface UserInterface {
+    public function create();
+    public function read();
+    public function update();
     public function delete($id);
 }
 
-class UsersDAO implements DAO {
-    private $db;
+class Users implements UserInterface {
 
-    public function __construct(Database $db) {
-        $this->db = $db;
+    //Connection
+    private $conn;
+
+    private $DB_TABLE = "users";
+
+    //Columns
+    public $id;
+    public $name;
+    public $email;
+    public $phone;
+
+    //Db Connection
+    public function __construct($db) {
+        $this->conn = $db;
+
+
     }
 
-    public function create($data) {
-        $sql = "INSERT INTO users (name, email, password) VALUES ('$data[name]', '$data[email]', '$data[password]')";
+    public function create() {
+        $sql =  "INSERT INTO ". $this->DB_TABLE ."
+        SET
+        name = :name, 
+        email = :email, 
+        phone = :phone";
+     
+        $stmt = $this->conn->prepare($sql);
 
-        return $this->db->executeQuery($sql);
+        $this->name=htmlspecialchars(strip_tags($this->name));
+            $this->email=htmlspecialchars(strip_tags($this->email));
+            $this->phone=htmlspecialchars(strip_tags($this->phone));
+        
+
+            $stmt->bindParam(":name", $this->name);
+            $stmt->bindParam(":email", $this->email);
+            $stmt->bindParam(":phone", $this->phone);
+        
+            if($stmt->execute()){
+            return true;
+         }
+         return false;
+        // $sql = "INSERT INTO users (name, email, password) VALUES ('$data[name]', '$data[email]', '$data[password]')";
+
+        // return $this->db->executeQuery($sql);
     }
+
+
+
+
+
+
+
+
+
     // public function create($name, $email, $phone,$data)
     // {
     //   $sql = 'INSERT INTO users (name, email, phone) VALUES (:name, :email, :phone)';
@@ -27,21 +72,34 @@ class UsersDAO implements DAO {
     //   return true;
     // }
 
-    public function read($id) {
-        $sql = "SELECT * FROM users WHERE id = $id";
+    public function read() {
+        // $sql = "SELECT * FROM users WHERE id = $id";
 
-        return $this->db->executeQuery($sql)->fetch_assoc();
+        // return $this->db->executeQuery($sql)->fetch_assoc();
     }
 
-    public function update($id, $data) {
-        $sql = "UPDATE users SET name='$data[name]', email='$data[email]', password='$data[password]' WHERE id=$id";
+    public function update() {
+        // $sql = "UPDATE users SET name='$data[name]', email='$data[email]', password='$data[password]' WHERE id=$id";
 
-        return $this->db->executeQuery($sql);
+        // return $this->db->executeQuery($sql);
     }
 
     public function delete($id) {
-        $sql = "DELETE FROM users WHERE id=$id";
 
-        return $this->db->executeQuery($sql);
+        $sql = "DELETE FROM " . $this->DB_TABLE . " WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+    
+        $this->id=htmlspecialchars(strip_tags($this->id));
+        $stmt->execute(['id' => $id]);
+
+        // $stmt->bindParam(1, $this->id);
+    
+        // if($stmt->execute()){
+        //     return true;
+        // }
+        // return false;
+        // $sql = "DELETE FROM users WHERE id=$id";
+
+        // return $this->db->executeQuery($sql);
     }
 }
