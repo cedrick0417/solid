@@ -1,44 +1,28 @@
 <?php
+class Database {
+    private $host = "localhost";
+    private $username = "root";
+    private $password = "";
+    private $database = "crud-api-pdo";
 
-// use DatabaseConnectionInterface as GlobalDatabaseConnectionInterface;
+    public function connect() {
+        $connection = new mysqli($this->host, $this->username, $this->password, $this->database);
+        echo "connected";
 
-interface DatabaseConnectionInterface
-{
-    public function connect();
-    public function test_input($data);
-    public function message($content, $status);
-
-}
-
-class Database
-{
-    // DB Params
-    private const DBHOST = 'localhost';
-    private const DBUSER = 'root';
-    private const DBPASS = '';
-    private const DBNAME = 'crud-api-pdo';
-    //Conn variable
-    protected $conn = null;
-    // Data Source Network
-    private $dsn = 'mysql:host=' . self::DBHOST . ';dbname=' . self::DBNAME . '';
-
-
-
-    //DB connect
-    public function connect()
-    {
-        try {
-            $this->conn = new PDO($this->dsn, self::DBUSER, self::DBPASS);
-            $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            echo "connected";
-        } catch (PDOException $e) {
-            die('Connectionn Failed : ' . $e->getMessage());
+        if ($connection->connect_error) {
+            die("Connection failed: " . $connection->connect_error);
         }
-        return $this->conn;
+
+        return $connection;
     }
-  
+
+    public function executeQuery($sql) {
+        $connection = $this->connect();
+
+        $result = $connection->query($sql);
+
+        $connection->close();
+
+        return $result;
+    }
 }
-
-$user = new Database();
-$user-> connect();
-

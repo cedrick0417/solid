@@ -1,95 +1,105 @@
-<?php
+<!-- <?php
 
-require_once('dbConnect.php');
-interface CRUDInterface
-{
-    public function create(array $data);
-    public function read($id);
-    public function update($id, $data);
-    public function delete($id);
-}
+require_once('Database.php');
 
-class User implements CRUDInterface
-{
-    private $db;
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<h1>My CRUD App</h1>
 
-    public function __construct(DatabaseConnectionInterface $db)
-    {
-        $this->db = $db;
+<form id="myForm">
+    <label for="name">Name:</label>
+    <input type="text" name="name" id="name">
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email">
+    <br>
+    <input type="hidden" name="id" id="id">
+    <button type="submit" id="submitBtn">Submit</button>
+</form>
+
+<table id="dataTable" border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        // Load initial data
+        loadData();
+
+        // Handle form submission
+        $("#myForm").submit(function(event) {
+            event.preventDefault();
+            saveData();
+        });
+    });
+
+    function loadData() {
+        $.get("api.php", function(data) {
+            $("#dataTable tbody").html("");
+            data.forEach(function(row) {
+                var tr = $("<tr>");
+                tr.append($("<td>").text(row.name));
+                tr.append($("<td>").text(row.email));
+                tr.append($("<td>").html(`
+                    <button onclick="editData(${row.id})">Edit</button>
+                    <button onclick="deleteData(${row.id})">Delete</button>
+                `));
+                $("#dataTable tbody").append(tr);
+            });
+        });
     }
 
-    public function create(array $data)
-    {
-        // insert user data into database
-        $sql = 'INSERT INTO users (name, email, phone) VALUES (:name, :email, :phone)';
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
+    function saveData() {
+        var data = $("#myForm").serialize();
+        $.post("api.php", data, function(response) {
+            if (response.success) {
+                $("#myForm")[0].reset();
+                loadData();
+            } else {
+                alert(response.message);
+            }
+        }, "json");
     }
 
-    public function read($id)
-    {
-        // retrieve user data from database
+    function editData(id) {
+        $.get("api.php?id=" + id, function(data) {
+            $("#name").val(data.name);
+            $("#email").val(data.email);
+            $("#id").val(data.id);
+            $("#submitBtn").text("Update");
+        });
     }
 
-    public function update($id, $data)
-    {
-        // update user data in database
-    }
-
-    public function delete($id)
-    {
-        // delete user data from database
-    }
-}
-
-class API
-{
-    private $user;
-
-    public function __construct(CRUDInterface $user)
-    {
-        $this->user = $user;
-    }
-
-    public function handleRequest()
-    {
-        $method = $_SERVER['REQUEST_METHOD'];
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        switch ($method) {
-            case 'GET':
-                if ($id) {
-                    $response = $this->user->read($id);
-                } else {
-                    $response = $this->user->readAll();
+    function deleteData(id) {
+        if (confirm("Are you sure you want to delete this record?")) {
+            $.ajax({
+                url: "api.php?id=" + id,
+                type: "DELETE",
+                success: function(response) {
+                    loadData();
+                },
+                error: function(xhr, status, error) {
+                    alert(error);
                 }
-                break;
-
-            case 'POST':
-                $response = $this->user->create($data);
-
-                break;
-
-            case 'PUT':
-                $response = $this->user->update($id, $data);
-                break;
-
-            case 'DELETE':
-                $response = $this->user->delete($id);
-                break;
-
-            default:
-                $response = 'Method not supported';
-                break;
+            });
         }
-
-        header('Content-Type: application/json');
-        echo json_encode($response);
     }
-}
-
-
-// $user = new User();
-// $user-> create();
+</script>
+</body>
+</html> -->
