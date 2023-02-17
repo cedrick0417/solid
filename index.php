@@ -1,8 +1,65 @@
-<!-- <?php
+<?php
 
 require_once('Database.php');
 
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Consuming PHP CRUD API</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+	<h1>Consuming PHP CRUD API</h1>
+	<div>
+		<label for="name">Name:</label>
+		<input type="text" id="name">
+		<label for="email">Email:</label>
+		<input type="email" id="email">
+		<button id="create">Create</button>
+	</div>
+	<div id="output"></div>
+	<script>
+		$(document).ready(function(){
+			// Create new record
+			$("#create").click(function(){
+				var name = $("#name").val();
+				var email = $("#email").val();
+				var data = {
+					"name": name,
+					"email": email
+				};
+				$.ajax({
+					url: "http://localhost/solid/CRUDApi.php/",
+					type: "POST",
+					data: JSON.stringify(data),
+					success: function(result){
+						$("#output").html(result);
+					},
+					error: function(error){
+						console.log(error);
+					}
+				});
+			});
+
+			// Read all records
+			// $.ajax({
+			// 	url: "http://example.com/api.php",
+			// 	type: "GET",
+			// 	success: function(result){
+			// 		$("#output").html(result);
+			// 	},
+			// 	error: function(error){
+			// 		console.log(error);
+			// 	}
+			// });
+		});
+	</script>
+</body>
+</html>
+
+<!--
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
