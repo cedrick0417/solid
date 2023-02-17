@@ -6,7 +6,7 @@ require_once('Database.php');
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Consuming PHP CRUD API</title>
+	<title>Document</title>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -43,16 +43,16 @@ require_once('Database.php');
 			});
 
 			// Read all records
-			// $.ajax({
-			// 	url: "http://example.com/api.php",
-			// 	type: "GET",
-			// 	success: function(result){
-			// 		$("#output").html(result);
-			// 	},
-			// 	error: function(error){
-			// 		console.log(error);
-			// 	}
-			// });
+			$.ajax({
+				url: "http://localhost/solid/CRUDApi.php/",
+				type: "GET",
+				success: function(result){
+					$("#output").html(result);
+				},
+				error: function(error){
+					console.log(error);
+				}
+			});
 		});
 	</script>
 </body>
