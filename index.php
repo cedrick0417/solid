@@ -1,21 +1,20 @@
-<?php
-
-require_once('Database.php');
-
-?>
+<?php require_once('Database.php');?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Document</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-	<h1>Consuming PHP CRUD API</h1>
 	<div>
 		<label for="name">Name:</label>
 		<input type="text" id="name">
 		<label for="email">Email:</label>
-		<input type="email" id="email">
+		<input type="email" id="email">	
+	
 		<button id="create">Create</button>
 	</div>
 	<div id="output"></div>
@@ -25,38 +24,46 @@ require_once('Database.php');
 			$("#create").click(function(){
 				var name = $("#name").val();
 				var email = $("#email").val();
+             
 				var data = {
 					"name": name,
 					"email": email
+          
 				};
 				$.ajax({
-					url: "http://localhost/solid/CRUDApi.php/",
+					url: "http://localhost/solid/CRUDApi.php",
 					type: "POST",
 					data: JSON.stringify(data),
 					success: function(result){
 						$("#output").html(result);
+        
 					},
 					error: function(error){
 						console.log(error);
 					}
 				});
+                var name = $("#name").val('');
+				var email = $("#email").val('');
 			});
 
 			// Read all records
-			$.ajax({
-				url: "http://localhost/solid/CRUDApi.php/",
-				type: "GET",
-				success: function(result){
-					$("#output").html(result);
-				},
-				error: function(error){
-					console.log(error);
-				}
-			});
+			// $.ajax({
+			// 	url: "http://localhost/solid/CRUDApi.php/",
+			// 	type: "GET",
+			// 	success: function(result){
+            //         console.log(result)
+			// 		$("#output").html(result);
+			// 	},
+			// 	error: function(error){
+			// 		console.log(error);
+			// 	}
+			// });
 		});
 	</script>
 </body>
 </html>
+
+
 
 <!--
 
